@@ -1,5 +1,18 @@
 # Diffusion Forcing: Next-token Prediction Meets Full-Sequence Diffusion
 
+
+## Sampling 
+
+`CUDA_VISIBLE_DEVICES=0 python -m main +name=sample_minecraft_pretrained load=outputs/minecraft.ckpt experiment.tasks=[validation]`
+
+## Training 
+
+`
+CUDA_VISIBLE_DEVICES=6 python -m main +name=exp_minecraft_train algorithm=df_video dataset=video_minecraft experiment.training.batch_size=2 experiment.validation.batch_size=2
+`
+
+
+
 #### [[Project Website]](https://boyuan.space/diffusion-forcing) [[Paper]](https://arxiv.org/abs/2407.01392)
 
 [Boyuan Chen<sup>1</sup>](https://boyuan.space/), [Diego Martí Monsó<sup>2</sup>](https://www.linkedin.com/in/diego-marti/?originalSubdomain=de), [ Yilun Du<sup>1</sup>](https://yilundu.github.io/), [Max Simchowitz<sup>1</sup>](https://msimchowitz.github.io/), [Russ Tedrake<sup>1</sup>](https://groups.csail.mit.edu/locomotion/russt.html), [Vincent Sitzmann<sup>1</sup>](https://www.vincentsitzmann.com/) <br/>
@@ -34,6 +47,7 @@ Install dependencies for time series, video and robotics:
 
 ```
 pip install -r requirements.txt
+pip install h5py rotary_embedding_torch diffusers
 ```
 
 [Sign up](https://wandb.ai/site) a wandb account for cloud logging and checkpointing. In command line, run `wandb login` to login.
@@ -57,7 +71,7 @@ Then run the following commands and go to the wandb panel to see the results.
 Our visualization is side by side, with prediction on the left and ground truth on the right. However, ground truth is expected to not align with prediction since the sequence is highly stochastic. Ground truth is provided to provide an idea about quality only.
 
 Autoregressively generate minecraft video with 1x the length it's trained on:
-`python -m main +name=sample_minecraft_pretrained load=outputs/minecraft.ckpt experiment.tasks=[validation]`
+`CUDA_VISIBLE_DEVICES=0 python -m main +name=sample_minecraft_pretrained load=outputs/minecraft.ckpt experiment.tasks=[validation]`
 
 To let the model roll out **longer than it's trained on**, simply append `dataset.validation_multiplier=8` to the above commands, and it will rollout `8x` longer than maximum sequence length it's trained on.
 
@@ -100,7 +114,9 @@ Then just run the corresponding commands:
 
 #### Minecraft
 
-`python -m main +name=your_experiment_name algorithm=df_video dataset=video_minecraft`
+`
+CUDA_VISIBLE_DEVICES=6 python -m main +name=exp_minecraft_train algorithm=df_video dataset=video_minecraft experiment.training.batch_size=2 experiment.validation.batch_size=2
+`
 
 #### DMLab
 
